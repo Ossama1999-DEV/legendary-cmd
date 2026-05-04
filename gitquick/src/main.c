@@ -14,9 +14,38 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <limits.h>
 
 int is_git_repo() {
-    return access(".git", F_OK) == 0;
+    char path[4096];
+
+    if (getcwd(path, sizeof(path)) == NULL) {
+        return 0;
+    }
+
+    while (1) {
+        char git_path[4096];
+        snprintf(git_path, sizeof(git_path), "%s/.git", path);
+
+        if (access(git_path, F_OK) == 0) {
+            return 1;
+        }
+
+        // Si on est à la racine
+        if (strcmp(path, "/") == 0) {
+            break;
+        }
+
+        // Remonter d’un dossier
+        char *slash = strrchr(path, '/');
+        if (slash) {
+            *slash = '\0';
+        } else {
+            break;
+        }
+    }
+
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
