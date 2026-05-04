@@ -35,7 +35,7 @@ The goal of this project is to:
 ### 1. Build and package
 
 ```bash
-./build.sh
+./startup.sh
 ```
 
 ### 2. Install the package
